@@ -1,4 +1,4 @@
-# Red Black Tree Visualization 
+# Red Black Tree Visualizer using JS, HTML amd CSS.
 
 Insert works, Delete and Search only works with leaf nodes (fixing positively).
 
