@@ -73,17 +73,19 @@ function add(tree, value) {
         sideOfTree = RIGHT;
         anotherDir = LEFT;
       }
-      // const sideOfTree = parent === grandFather.left ? LEFT : RIGHT;
-      // const anotherDirection = parent === grandFather.right ? LEFT : RIGHT;
 
       if (parent[sideOfTree] === currentNode) {
         currentNode = parent;
+        // console.log('before' + currentNode.value);
         rotate(currentNode, anotherDir);
+        // console.log('after' + currentNode.value);
         currentNode.color = BLACK;
         currentNode[anotherDir].color = RED;
       } else {
+        // console.log('before' + currentNode.value);
         rotate(currentNode, sideOfTree);
         rotate(currentNode, anotherDir);
+        // console.log('after' + currentNode.value);
         currentNode.color = BLACK;
         currentNode[anotherDir].color = RED;
       }
@@ -117,7 +119,9 @@ function remove(tree, value) {
 
   const currentNode = maxInLeft;
   const { parent } = currentNode;
+
   let direction, anotherDir;
+
   if (parent.left === currentNode) {
     direction = LEFT;
     anotherDir = RIGHT;
@@ -125,6 +129,8 @@ function remove(tree, value) {
     direction = RIGHT;
     anotherDir = LEFT;
   }
+  // const direction = parent.left === currentNode ? LEFT : RIGHT;
+  // const anotherDir = parent.left === currentNode ? RIGHT : LEFT;
 
   parent[direction] = null;
 
@@ -132,8 +138,7 @@ function remove(tree, value) {
     const { parent: currentParent } = currentNode;
     const sibling = getSibling(currentNode);
     const nephewDirection = sibling[direction];
-    const nephewAnother = sibling[anotherDirection];
-
+    const nephewAnother = sibling[anotherDir];
     if (!sibling) break;
 
     if (sibling.color === RED) {
@@ -159,7 +164,7 @@ function remove(tree, value) {
     ) {
       sibling.color = RED;
       nephewDirection.color = BLACK;
-      rotate(nephewDirection, anotherDirection);
+      rotate(nephewDirection, anotherDir);
       continue;
     }
 
@@ -174,4 +179,19 @@ function remove(tree, value) {
   return buildTree(currentNode);
 }
 
-export { add, remove };
+function search(tree, value) {
+  let searchNode = tree;
+  // search deleted node
+  while (value !== searchNode.value) {
+    if (value > searchNode.value) {
+      searchNode = searchNode.right;
+    } else if (value < searchNode.value) {
+      searchNode = searchNode.left;
+    } else {
+      return true;
+    }
+    if (!searchNode) return false;
+  }
+}
+
+export { add, remove, search };
