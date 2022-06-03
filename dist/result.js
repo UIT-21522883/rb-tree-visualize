@@ -9360,10 +9360,15 @@
 	
 	var addForm = document.forms.insert_form;
 	var delForm = document.forms.delete_form;
+	var searchForm = document.forms.search_form;
+	
 	var inputForAdd = addForm.elements.numberadd;
-	var btnAdd = addForm.elements.insert;
 	var inputForDel = delForm.elements.numberdel;
+	var inputForSearch = searchForm.elements.numbersearch;
+	
+	var btnAdd = addForm.elements.insert;
 	var btnDel = delForm.elements.del;
+	var btnSearch = searchForm.elements.search;
 	
 	var rbTreeList = null;
 	var tree = {};
@@ -9378,7 +9383,6 @@
 	  rbTreeList = (0, _rbtree.add)(rbTreeList, parseInt(n));
 	
 	  inputForAdd.value = '';
-	
 	  // Reset canvas
 	  var _iteratorNormalCompletion = true;
 	  var _didIteratorError = false;
@@ -9451,13 +9455,26 @@
 	  tree.display();
 	}
 	
-	btnAdd.addEventListener('click', handlerAdd);
+	function handlerSearch(e) {
+	  e.preventDefault();
+	  var n = inputForSearch.value;
 	
+	  if (n.search(/^\d{1,6}$/) === -1) {
+	    alert('You must enter only numbers');
+	    return;
+	  }
+	
+	  (0, _rbtree.search)(rbTreeList, n) ? alert('Node ' + n + ' found') : alert('Node not found');
+	}
+	
+	btnAdd.addEventListener('click', handlerAdd);
 	addForm.addEventListener('submit', handlerAdd);
 	
 	btnDel.addEventListener('click', handlerDel);
-	
 	delForm.addEventListener('submit', handlerDel);
+	
+	btnSearch.addEventListener('submit', handlerSearch);
+	searchForm.addEventListener('submit', handlerSearch);
 
 /***/ }),
 /* 333 */
@@ -9468,7 +9485,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.remove = exports.add = undefined;
+	exports.search = exports.remove = exports.add = undefined;
 	
 	var _functions = __webpack_require__(334);
 	
@@ -9538,17 +9555,19 @@
 	        sideOfTree = _constants.RIGHT;
 	        anotherDir = _constants.LEFT;
 	      }
-	      // const sideOfTree = parent === grandFather.left ? LEFT : RIGHT;
-	      // const anotherDirection = parent === grandFather.right ? LEFT : RIGHT;
 	
 	      if (parent[sideOfTree] === currentNode) {
 	        currentNode = parent;
+	        // console.log('before' + currentNode.value);
 	        (0, _functions.rotate)(currentNode, anotherDir);
+	        // console.log('after' + currentNode.value);
 	        currentNode.color = _constants.BLACK;
 	        currentNode[anotherDir].color = _constants.RED;
 	      } else {
+	        // console.log('before' + currentNode.value);
 	        (0, _functions.rotate)(currentNode, sideOfTree);
 	        (0, _functions.rotate)(currentNode, anotherDir);
+	        // console.log('after' + currentNode.value);
 	        currentNode.color = _constants.BLACK;
 	        currentNode[anotherDir].color = _constants.RED;
 	      }
@@ -9583,8 +9602,10 @@
 	  var currentNode = maxInLeft;
 	  var parent = currentNode.parent;
 	
+	
 	  var direction = void 0,
 	      anotherDir = void 0;
+	
 	  if (parent.left === currentNode) {
 	    direction = _constants.LEFT;
 	    anotherDir = _constants.RIGHT;
@@ -9592,6 +9613,8 @@
 	    direction = _constants.RIGHT;
 	    anotherDir = _constants.LEFT;
 	  }
+	  // const direction = parent.left === currentNode ? LEFT : RIGHT;
+	  // const anotherDir = parent.left === currentNode ? RIGHT : LEFT;
 	
 	  parent[direction] = null;
 	
@@ -9600,8 +9623,7 @@
 	
 	    var sibling = (0, _functions.getSibling)(currentNode);
 	    var nephewDirection = sibling[direction];
-	    var nephewAnother = sibling[anotherDirection];
-	
+	    var nephewAnother = sibling[anotherDir];
 	    if (!sibling) break;
 	
 	    if (sibling.color === _constants.RED) {
@@ -9620,7 +9642,7 @@
 	    if (nephewDirection && nephewDirection.color === _constants.RED && (!nephewAnother || nephewAnother.color === _constants.BLACK)) {
 	      sibling.color = _constants.RED;
 	      nephewDirection.color = _constants.BLACK;
-	      (0, _functions.rotate)(nephewDirection, anotherDirection);
+	      (0, _functions.rotate)(nephewDirection, anotherDir);
 	      continue;
 	    }
 	
@@ -9635,8 +9657,24 @@
 	  return (0, _functions.buildTree)(currentNode);
 	}
 	
+	function search(tree, value) {
+	  var searchNode = tree;
+	  // search deleted node
+	  while (value !== searchNode.value) {
+	    if (value > searchNode.value) {
+	      searchNode = searchNode.right;
+	    } else if (value < searchNode.value) {
+	      searchNode = searchNode.left;
+	    } else {
+	      return true;
+	    }
+	    if (!searchNode) return false;
+	  }
+	}
+	
 	exports.add = add;
 	exports.remove = remove;
+	exports.search = search;
 
 /***/ }),
 /* 334 */
@@ -9654,8 +9692,6 @@
 	var _constants = __webpack_require__(335);
 	
 	// Create a new deep copy
-	// Create a copy of the orginal object to prevent errors while editing
-	
 	var cloneTree = function cloneTree(tree) {
 	  var newTree = {};
 	  Object.keys(tree).forEach(function (key) {
@@ -9877,6 +9913,7 @@
 	
 	        var rectNode = _this2.nodes[idx].node.getBoundingClientRect();
 	        var rectParent = _this2.nodes[Math.floor((idx - 1) / 2)].node.getBoundingClientRect();
+	
 	        var sideLeft = rectNode.left < rectParent.left;
 	
 	        var canvas = document.createElement('canvas');
@@ -9970,10 +10007,10 @@
 
 	exports = module.exports = __webpack_require__(340)();
 	// imports
-	exports.push([module.id, "@import url(https://fonts.googleapis.com/  css2?family=Courgette&display=swap);", ""]);
+	exports.push([module.id, "@import url(https://fonts.googleapis.com/css2?family=Courgette&display=swap);", ""]);
 	
 	// module
-	exports.push([module.id, "/*\r\n=============== \r\nLogo fonts\r\n===============\r\n*/\r\n/*\r\n=============== \r\nVariables\r\n===============\r\n*/\r\n\r\n:root {\r\n  /* dark shades of primary color*/\r\n  --clr-primary-1: hsl(22, 28%, 21%);\r\n  --clr-primary-2: hsl(22, 28%, 29%);\r\n  --clr-primary-3: hsl(22, 28%, 37%);\r\n  --clr-primary-4: hsl(22, 28%, 45%);\r\n  /* primary/main color */\r\n  --clr-primary-5: hsl(22, 31%, 52%);\r\n  /* lighter shades of primary color */\r\n  --clr-primary-6: hsl(22, 31%, 60%);\r\n  --clr-primary-7: hsl(22, 31%, 67%);\r\n  --clr-primary-8: hsl(20, 31%, 74%);\r\n  --clr-primary-9: hsl(22, 31%, 81%);\r\n  --clr-primary-10: hsl(22, 31%, 88%);\r\n  /* darkest grey - used for headings */\r\n  --clr-grey-1: hsl(209, 61%, 16%);\r\n  --clr-grey-2: hsl(211, 39%, 23%);\r\n  --clr-grey-3: hsl(209, 34%, 30%);\r\n  --clr-grey-4: hsl(209, 28%, 39%);\r\n  /* grey used for paragraphs */\r\n  --clr-grey-5: hsl(210, 22%, 49%);\r\n  --clr-grey-6: hsl(209, 23%, 60%);\r\n  --clr-grey-7: hsl(211, 27%, 70%);\r\n  --clr-grey-8: hsl(210, 31%, 80%);\r\n  --clr-grey-9: hsl(212, 33%, 89%);\r\n  --clr-grey-10: hsl(210, 36%, 96%);\r\n  --clr-white: #fff;\r\n  --clr-red-dark: hsl(360, 67%, 44%);\r\n  --clr-red-light: hsl(360, 71%, 66%);\r\n  --clr-green-dark: hsl(125, 67%, 44%);\r\n  --clr-green-light: hsl(125, 71%, 66%);\r\n  --clr-black: #222;\r\n  --transition: all 0.3s linear;\r\n  --spacing: 0.1rem;\r\n  --radius: 0.25rem;\r\n  --light-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);\r\n  --dark-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);\r\n  --max-width: 1170px;\r\n  --fixed-width: 620px;\r\n}\r\n\r\nbody {\r\n  /* font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,\r\n    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; */\r\n    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif  ;\r\n  background: var(--clr-white);\r\n  color: var(--clr-grey-1);\r\n  line-height: 1.5;\r\n  font-size: 0.875rem;\r\n}\r\n\r\nh1 {\r\n  font-size: 2.5rem;\r\n}\r\n\r\n.header {\r\n  height: 5rem;\r\n  width: 90vw;\r\n  margin: 0 auto;\r\n  max-width: var(--max-width);\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: space-between;\r\n}\r\n\r\n.logo {\r\n  font-family: 'Courgette', cursive;\r\n  color: var(--clr-primary-7);\r\n}\r\n\r\n.section-1 {\r\n  background-color: var(--clr-primary-1);\r\n}\r\n\r\n.form_control {\r\n  display: grid;\r\n  grid-template-columns: 400px 400px;\r\n  column-gap: 30px;\r\n  margin-bottom: 1.25rem;\r\n  padding: 1rem;\r\n}\r\n\r\n.search_input {\r\n  padding: 0.5rem;\r\n  background: var(--clr-grey-10);\r\n  border-radius: var(--radius);\r\n  border-color: var(--clr-grey-5);\r\n  letter-spacing: var(--spacing);\r\n  margin-right: 10px;\r\n}\r\n\r\n.btn {\r\n  text-transform: uppercase;\r\n  background: var(--clr-primary-5);\r\n  color: var(--clr-primary-10);\r\n  padding: 0.375rem 0.75rem;\r\n  letter-spacing: var(--spacing);\r\n  display: inline-block;\r\n  font-weight: 400;\r\n  transition: var(--transition);\r\n  font-size: 0.875rem;\r\n  cursor: pointer;\r\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);\r\n  border-radius: var(--radius);\r\n  border-color: transparent;\r\n}\r\n.btn:hover {\r\n  color: var(--clr-primary-1);\r\n  background: var(--clr-primary-7);\r\n}\r\n\r\n.field {\r\n  margin-top: 1.25rem;\r\n  background-color: var(--clr-grey-8);\r\n  padding: 1rem;\r\n}\r\n\r\n.message {\r\n  height: 20px;\r\n  padding: 5px 20px;\r\n  color: red;\r\n}\r\n\r\n.node {\r\n  width: 40px;\r\n  height: 40px;\r\n  box-sizing: border-box;\r\n  border-radius: 50%;\r\n  background-color: black;\r\n  padding-top: 0.55rem;\r\n  padding-left: 0.65rem;\r\n  color: var(--clr-white);\r\n  font-size: 1rem;\r\n  z-index: 10;\r\n}\r\n\r\n.row {\r\n  height: 5rem;\r\n  display: flex;\r\n  justify-content: space-around;\r\n}\r\n\r\n.root {\r\n  justify-content: center;\r\n}\r\n\r\ncanvas {\r\n  position: absolute;\r\n}\r\n", ""]);
+	exports.push([module.id, "/*\r\n=============== \r\nLogo fonts\r\n===============\r\n*/\r\n/*\r\n=============== \r\nVariables\r\n===============\r\n*/\r\n\r\n:root {\r\n  /* dark shades of primary color*/\r\n  --clr-primary-1: hsl(22, 28%, 21%);\r\n  --clr-primary-2: hsl(22, 28%, 29%);\r\n  --clr-primary-3: hsl(22, 28%, 37%);\r\n  --clr-primary-4: hsl(22, 28%, 45%);\r\n  /* primary/main color */\r\n  --clr-primary-5: hsl(22, 31%, 52%);\r\n  /* lighter shades of primary color */\r\n  --clr-primary-6: hsl(22, 31%, 60%);\r\n  --clr-primary-7: hsl(22, 31%, 67%);\r\n  --clr-primary-8: hsl(20, 31%, 74%);\r\n  --clr-primary-9: hsl(22, 31%, 81%);\r\n  --clr-primary-10: hsl(22, 31%, 88%);\r\n  /* darkest grey - used for headings */\r\n  --clr-grey-1: hsl(209, 61%, 16%);\r\n  --clr-grey-2: hsl(211, 39%, 23%);\r\n  --clr-grey-3: hsl(209, 34%, 30%);\r\n  --clr-grey-4: hsl(209, 28%, 39%);\r\n  /* grey used for paragraphs */\r\n  --clr-grey-5: hsl(210, 22%, 49%);\r\n  --clr-grey-6: hsl(209, 23%, 60%);\r\n  --clr-grey-7: hsl(211, 27%, 70%);\r\n  --clr-grey-8: hsl(210, 31%, 80%);\r\n  --clr-grey-9: hsl(212, 33%, 89%);\r\n  --clr-grey-10: hsl(210, 36%, 96%);\r\n  --clr-white: #fff;\r\n  --clr-red-dark: hsl(360, 67%, 44%);\r\n  --clr-red-light: hsl(360, 71%, 66%);\r\n  --clr-green-dark: hsl(125, 67%, 44%);\r\n  --clr-green-light: hsl(125, 71%, 66%);\r\n  --clr-black: #222;\r\n  --transition: all 0.3s linear;\r\n  --spacing: 0.1rem;\r\n  --radius: 0.25rem;\r\n  --light-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);\r\n  --dark-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);\r\n  --max-width: 1170px;\r\n  --fixed-width: 620px;\r\n}\r\n\r\nbody {\r\n  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,\r\n    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;\r\n  background: var(--clr-white);\r\n  color: var(--clr-grey-1);\r\n  line-height: 1.5;\r\n  font-size: 0.875rem;\r\n}\r\n\r\nh1 {\r\n  font-size: 2.5rem;\r\n}\r\n\r\n.header {\r\n  height: 5rem;\r\n  width: 90vw;\r\n  margin: 0 auto;\r\n  max-width: var(--max-width);\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: space-between;\r\n}\r\n\r\n.logo {\r\n  font-family: 'Courgette', cursive;\r\n  color: var(--clr-primary-7);\r\n}\r\n\r\n.section-1 {\r\n  background-color: var(--clr-primary-10);\r\n}\r\n\r\n.form_control {\r\n  display: grid;\r\n  grid-template-columns: 400px 400px 400px;\r\n  column-gap: 30px;\r\n  margin-bottom: 1.25rem;\r\n  padding: 1rem;\r\n}\r\n\r\n.search_input {\r\n  padding: 0.5rem;\r\n  background: var(--clr-grey-10);\r\n  border-radius: var(--radius);\r\n  border-color: var(--clr-grey-5);\r\n  letter-spacing: var(--spacing);\r\n  margin-right: 10px;\r\n}\r\n\r\n.btn {\r\n  text-transform: uppercase;\r\n  background: var(--clr-primary-5);\r\n  color: var(--clr-primary-10);\r\n  padding: 0.375rem 0.75rem;\r\n  letter-spacing: var(--spacing);\r\n  display: inline-block;\r\n  font-weight: 400;\r\n  transition: var(--transition);\r\n  font-size: 0.875rem;\r\n  cursor: pointer;\r\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);\r\n  border-radius: var(--radius);\r\n  border-color: transparent;\r\n}\r\n.btn:hover {\r\n  color: var(--clr-primary-1);\r\n  background: var(--clr-primary-7);\r\n}\r\n\r\n.field {\r\n  margin-top: 1.25rem;\r\n  background-color: var(--clr-grey-8);\r\n  padding: 1rem;\r\n}\r\n\r\n.message {\r\n  height: 20px;\r\n  padding: 5px 20px;\r\n  color: red;\r\n}\r\n\r\n.node {\r\n  width: 40px;\r\n  height: 40px;\r\n  box-sizing: border-box;\r\n  border-radius: 50%;\r\n  background-color: black;\r\n  padding-top: 0.55rem;\r\n  padding-left: 0.65rem;\r\n  color: var(--clr-white);\r\n  font-size: 1rem;\r\n  z-index: 10;\r\n}\r\n\r\n.row {\r\n  height: 5rem;\r\n  display: flex;\r\n  justify-content: space-around;\r\n}\r\n\r\n.root {\r\n  justify-content: center;\r\n}\r\n\r\ncanvas {\r\n  position: absolute;\r\n}\r\n", ""]);
 	
 	// exports
 
