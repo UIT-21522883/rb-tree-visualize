@@ -13,3 +13,7 @@ You can visit: https://rbtreevisualizeby21522883.netlify.app to start on my depl
 Step 1: Add your own first value as RB Tree nodes by enter a value (must be a number) and click on "Insert". Go on entering your next values, one by one, then you see the web proceeded the RB Tree for you.
 Step 2: If you want to delete a node, enter its number and click on Delete.
 Step 3: Search works the same ways.
+
+### Your active site should look like this: 
+[image](https://user-images.githubusercontent.com/94747492/171922859-d41b1701-0e87-4fbb-a98e-8ed3d9b8a4a3.png)
+
