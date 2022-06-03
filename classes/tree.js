@@ -66,6 +66,7 @@ class Tree {
       const rectNode = this.nodes[idx].node.getBoundingClientRect();
       const rectParent =
         this.nodes[Math.floor((idx - 1) / 2)].node.getBoundingClientRect();
+
       const sideLeft = rectNode.left < rectParent.left;
 
       const canvas = document.createElement('canvas');
