@@ -75,12 +75,12 @@ h1 {
 }
 
 .logo {
-  font-family: 'Courgette', cursive;
-  color: var(--clr-primary-7);
+  font-family: 'Courgette';
+  color: var(--clr-primary-1);
 }
 
 .section-1 {
-  background-color: var(--clr-primary-10);
+  background-color: var(--clr-primary-1);
 }
 
 .form_control {
