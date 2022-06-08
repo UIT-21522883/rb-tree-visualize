@@ -30,7 +30,7 @@ Step 2: Start Visual Studio Code session and open the folder containing this pro
 Step 3: Open the extension tab, search for this extension and start installing it.
 ![2](document/liveserver.png)
 
-Step 4: Open your terminal, type 'npx install', this helps the program collects all your codes and write them to 'result.js' to start activating. If your terminal needs you to do some additional steps, just follow them.
+Step 4: Open your terminal, type 'npx webpack', this helps the program collects all your codes and write them to 'result.js' to start activating. If your terminal needs you to do some additional steps, just follow them.
 
 Step 5: Next, look to your bottom right corner of VSC application and find the text displaying your port, click on it.
 
