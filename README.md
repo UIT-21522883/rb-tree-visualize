@@ -1,6 +1,6 @@
 # Red Black Tree Visualizer using JS, HTML amd CSS.
 
-Insert works, Delete and Search only works with leaf nodes (fixing positively).
+Insert works, Delete and Search only works with nodes having leaf son nodes (fixing positively).
 
 I changed the color and font so it may appear different from the UI in report.
 
